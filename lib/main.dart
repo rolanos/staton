@@ -22,17 +22,23 @@ class MyApp extends StatelessWidget {
       create: (context) => QuestionBloc(),
       child: MaterialApp(
         theme: ThemeData(
+          scaffoldBackgroundColor: const Color.fromARGB(101, 89, 92, 190),
           textTheme: TextTheme(
+            //texts like question
             titleMedium: const TextStyle(fontSize: 22, color: Colors.white),
+            //texts like amount of answers
+            titleSmall: const TextStyle(
+                fontSize: 12, color: Color.fromARGB(82, 255, 254, 254)),
+            //texts like answers for question
             bodyMedium: const TextStyle(
               color: Colors.white,
               fontSize: 18,
             ),
+            //texts like value of procent
             bodySmall: const TextStyle(
               color: Colors.white,
               fontSize: 14,
             ),
-            labelSmall: TextStyle(color: Colors.grey.shade200, fontSize: 12),
           ),
         ),
         home: const HomePage(),
