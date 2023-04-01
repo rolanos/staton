@@ -1,6 +1,8 @@
 import 'dart:async';
 
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../logic/bloc/question_bloc.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
@@ -31,6 +33,13 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+      systemNavigationBarColor:
+          (MediaQuery.of(context).platformBrightness == Brightness.dark)
+              ? const Color.fromARGB(101, 89, 92, 190)
+              : Color.fromARGB(232, 17, 15, 65),
+      systemNavigationBarContrastEnforced: true,
+    ));
     return BlocBuilder<QuestionBloc, QuestionInitial>(
       builder: (context, state) {
         if (state.question != null) {
@@ -41,8 +50,6 @@ class _HomePageState extends State<HomePage> {
             isLoaded = true;
           }
           return Scaffold(
-            backgroundColor:
-                Theme.of(context).copyWith().scaffoldBackgroundColor,
             floatingActionButton: PopUpMenu(
               context: context,
             ),
@@ -228,9 +235,10 @@ class _HomePageState extends State<HomePage> {
                               icon: AnimatedSwitcher(
                                 duration: const Duration(milliseconds: 180),
                                 child: (showStat)
-                                    ? const Icon(Icons.check,
+                                    ? const Icon(
+                                        Icons.check,
                                         color: Colors.white,
-                                        key: ValueKey('icon1'))
+                                      )
                                     : const Icon(
                                         Icons.arrow_forward,
                                         color: Colors.white,
@@ -247,6 +255,7 @@ class _HomePageState extends State<HomePage> {
             ),
           );
         } else {
+          //Загрузка вопроса.
           return Scaffold(
               backgroundColor:
                   Theme.of(context).copyWith().scaffoldBackgroundColor,
@@ -257,6 +266,7 @@ class _HomePageState extends State<HomePage> {
   }
 }
 
+//Меню с выбором действий: поменять вопрос, информация о приложении и тд.
 class PopUpMenu extends StatelessWidget {
   bool isVisiable = true;
   final BuildContext context;
@@ -324,23 +334,118 @@ class PopUpMenu extends StatelessWidget {
                 ),
                 PopupMenuDivider(),
                 PopupMenuItem(
-                    child: Row(
-                  children: [
-                    Icon(
-                      Icons.info_outline,
-                      color: Colors.white,
-                    ),
-                    Text(
-                      " Информация",
-                      style: Theme.of(context).textTheme.bodyMedium,
-                    )
-                  ],
-                ))
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.info_outline,
+                        color: Colors.white,
+                      ),
+                      Text(
+                        " Информация",
+                        style: Theme.of(context).textTheme.bodyMedium,
+                      )
+                    ],
+                  ),
+                  onTap: () {
+                    TextEditingController controller = TextEditingController();
+                    setState(
+                      () => showDialog(
+                        context: context,
+                        barrierDismissible: false,
+                        builder: (context) {
+                          return AlertDialog(
+                            backgroundColor: Theme.of(context)
+                                .scaffoldBackgroundColor
+                                .withOpacity(1),
+                            title: GestureDetector(
+                              onDoubleTap: () {
+                                Navigator.of(context).pop();
+                                setState(() => showDialog(
+                                      context: context,
+                                      builder: (context) => AlertDialog(
+                                        content: TextField(
+                                          controller: controller,
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyMedium,
+                                        ),
+                                        backgroundColor: Theme.of(context)
+                                            .scaffoldBackgroundColor,
+                                        actions: [
+                                          TextButton(
+                                              onPressed: () async {
+                                                final ref = FirebaseDatabase
+                                                    .instance
+                                                    .ref();
+                                                final answer = await ref
+                                                    .child('admin')
+                                                    .get();
+                                                if (answer.exists &&
+                                                    answer.value.toString() ==
+                                                        controller.text) {
+                                                  Navigator.of(context).pop();
+                                                  showMenu(context, 16);
+                                                }
+                                              },
+                                              child: Text(
+                                                "Вход",
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .bodyMedium,
+                                              ))
+                                        ],
+                                      ),
+                                    ));
+                              },
+                              child: Text(
+                                "Информация",
+                                style: Theme.of(context).textTheme.titleMedium,
+                              ),
+                            ),
+                            content: Text(
+                              "Данное приложение преднозначенно исключительно для ...",
+                              style: Theme.of(context).textTheme.bodyMedium,
+                            ),
+                            actions: [
+                              TextButton(
+                                onPressed: () => Navigator.of(context).pop(),
+                                child: Text(
+                                  "Назад",
+                                  style: Theme.of(context).textTheme.bodyMedium,
+                                ),
+                              ),
+                            ],
+                          );
+                        },
+                      ),
+                    );
+                  },
+                ),
               ]),
         ),
       ),
     );
   }
+}
+
+//Виджет загрузки вопроса
+Widget Downloading(BuildContext context) {
+  return Center(
+    child: Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        SpinKitDoubleBounce(
+          size: MediaQuery.of(context).size.width * 0.3,
+          color: Colors.white,
+        ),
+        Text(
+          "Загрузка",
+          style: Theme.of(context).textTheme.bodyMedium,
+        ),
+      ],
+    ),
+  );
 }
 
 Future<void> showMenu(BuildContext context, double padding) {
@@ -385,6 +490,9 @@ Future<void> showMenu(BuildContext context, double padding) {
                   },
                 ),
                 TextButton(
+                    style: ButtonStyle(
+                        backgroundColor: MaterialStatePropertyAll(
+                            Color.fromARGB(255, 117, 46, 233))),
                     onPressed: () {
                       context.read<QuestionBloc>().add(AddQuestionEvent(
                           questionController.text,
@@ -394,29 +502,10 @@ Future<void> showMenu(BuildContext context, double padding) {
                         i.clear();
                       }
                     },
-                    child: const Text("Add")),
+                    child: const Text("Добавить вопрос")),
               ],
             ), //There is filling form
           ),
         );
       });
-}
-
-Widget Downloading(BuildContext context) {
-  return Center(
-    child: Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        SpinKitDoubleBounce(
-          size: MediaQuery.of(context).size.width * 0.3,
-          color: Colors.white,
-        ),
-        Text(
-          "Загрузка",
-          style: Theme.of(context).textTheme.bodyMedium,
-        ),
-      ],
-    ),
-  );
 }
