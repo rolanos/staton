@@ -68,13 +68,15 @@ class _HomePageState extends State<HomePage> {
 
     return BlocBuilder<QuestionBloc, QuestionInitial>(
       builder: (context, state) {
+        //При отсутствие подключения к интернету
         if (_connectionStatus == ConnectivityResult.none) {
           return Scaffold(
               body: _downloading(context, "Нет подключения к интернету"));
         }
+        //Получен вопрос от сервера
         if (state.question != null) {
           if (isLoaded == false) {
-            for (var i = 0; i < state.question!.titels!.length; i++) {
+            for (int i = 0; i < state.question!.titels!.length; i++) {
               isTicked.add(false);
             }
             isLoaded = true;
@@ -107,9 +109,6 @@ class _HomePageState extends State<HomePage> {
                     ),
                     Divider(
                       height: padding,
-                      thickness: 0.5,
-                      color: Theme.of(context).textTheme.bodyMedium!.color ??
-                          const Color.fromARGB(255, 228, 255, 248),
                     ),
                     ListView.builder(
                       padding: const EdgeInsets.all(0),
@@ -174,7 +173,7 @@ class _HomePageState extends State<HomePage> {
                                     progressColor:
                                         const Color.fromARGB(255, 117, 46, 233),
                                     trailing: Text(
-                                      "${(state.question!.totalResponses! == 0) ? (100 * (state.question!.answersAmount![index] / (state.question!.totalResponses! + 1))).toStringAsFixed(1) : (100 * (state.question!.answersAmount![index] / (state.question!.totalResponses!))).toStringAsFixed(1)}%",
+                                      "${(state.question!.totalResponses! == 0) ? (index == currentTickedIndex) ? (100 * ((state.question!.answersAmount![index] + 1) / (state.question!.totalResponses! + 1))).toStringAsFixed(1) : (100 * (state.question!.answersAmount![index]) / (state.question!.totalResponses! + 1)).toStringAsFixed(1) : (100 * (state.question!.answersAmount![index] / (state.question!.totalResponses!))).toStringAsFixed(1)}%",
                                       style:
                                           Theme.of(context).textTheme.bodySmall,
                                     ),
@@ -262,7 +261,7 @@ class _HomePageState extends State<HomePage> {
             ),
           );
         } else {
-          //Загрузка вопроса.
+          //Загрузка вопроса
           return Scaffold(
               backgroundColor:
                   Theme.of(context).copyWith().scaffoldBackgroundColor,
