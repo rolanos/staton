@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'firebase_options.dart';
-import './screens/home_screen.dart';
+import 'screens/home_screen/home_screen.dart';
 import './logic/bloc/question_bloc.dart';
 
 void main() async {
@@ -22,7 +22,17 @@ class MyApp extends StatelessWidget {
       create: (context) => QuestionBloc(),
       child: MaterialApp(
         theme: ThemeData(
+          snackBarTheme: SnackBarThemeData(
+            behavior: SnackBarBehavior.floating,
+            backgroundColor: Color.fromARGB(255, 72, 25, 148),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(
+                Radius.circular(16.0),
+              ),
+            ),
+          ),
           scaffoldBackgroundColor: const Color.fromARGB(101, 89, 92, 190),
+          iconTheme: IconThemeData(color: Colors.white),
           textTheme: TextTheme(
             //texts like question
             titleMedium: const TextStyle(fontSize: 22, color: Colors.white),

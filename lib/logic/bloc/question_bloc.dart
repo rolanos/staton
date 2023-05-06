@@ -21,6 +21,7 @@ class QuestionBloc extends Bloc<QuestionEvent, QuestionInitial> {
       do {
         number = Random().nextInt((amount.value as int)) + 1;
         if (check == number) {
+          history.add(number);
           continue;
         }
         bool isIncluded = prefs.containsKey('$number');
