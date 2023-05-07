@@ -75,6 +75,7 @@ class QuestionBloc extends Bloc<QuestionEvent, QuestionInitial> {
           number: ((amount.value as int) + 1),
           totalResponses: 0,
           titels: event.titels,
+          tags: event.tags,
           answersAmount: List<int>.generate(event.titels.length, (index) => 0));
       await ref
           .child('question/${(amount.value as int) + 1}')

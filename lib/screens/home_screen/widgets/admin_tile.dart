@@ -8,6 +8,7 @@ class AdminUI {
   ///Вызов формы заполнения вопроса
   static Future<void> adminTile(BuildContext context, double padding) {
     List<TextEditingController> answerAddList = [];
+    List<TextEditingController> tagsList = [];
     TextEditingController questionController = TextEditingController();
     return showModalBottomSheet(
         context: context,
@@ -22,19 +23,34 @@ class AdminUI {
               width: double.maxFinite,
               child: Column(
                 children: [
-                  IconButton(
-                      onPressed: () {
-                        setState(() {
-                          answerAddList.add(TextEditingController());
-                        });
-                      },
-                      icon: const Icon(Icons.add)),
+                  Row(
+                    children: [
+                      //Варианты ответов на вопросы
+                      IconButton(
+                          onPressed: () {
+                            setState(() {
+                              answerAddList.add(TextEditingController());
+                            });
+                          },
+                          icon: const Icon(Icons.question_mark)),
+                      VerticalDivider(),
+                      IconButton(
+                          onPressed: () {
+                            setState(() {
+                              tagsList.add(TextEditingController());
+                            });
+                          },
+                          icon: const Icon(Icons.tag)),
+                    ],
+                  ),
                   TextField(
                     decoration: const InputDecoration(
+                        border: InputBorder.none,
                         hintText: "Вопрос",
                         hintStyle: TextStyle(color: Colors.white)),
                     controller: questionController,
                   ),
+                  //Список полей для добавления ответов на вопрос
                   ListView.builder(
                     shrinkWrap: true,
                     itemCount: answerAddList.length,
@@ -42,6 +58,22 @@ class AdminUI {
                       return TextField(
                         controller: answerAddList[index],
                         decoration: InputDecoration(
+                            border: InputBorder.none,
+                            hintText: "Ответ ${index + 1}",
+                            hintStyle: TextStyle(color: Colors.white)),
+                      );
+                    },
+                  ),
+                  Divider(),
+                  //Список полей для добавления тэгов
+                  ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: tagsList.length,
+                    itemBuilder: (context, index) {
+                      return TextField(
+                        controller: tagsList[index],
+                        decoration: InputDecoration(
+                            border: InputBorder.none,
                             hintText: "Ответ ${index + 1}",
                             hintStyle: TextStyle(color: Colors.white)),
                       );
@@ -55,10 +87,14 @@ class AdminUI {
                         context.read<QuestionBloc>().add(AddQuestionEvent(
                             questionController.text,
                             List.generate(answerAddList.length,
-                                (index) => answerAddList[index].text)));
-                        for (var i in answerAddList) {
-                          i.clear();
-                        }
+                                (index) => answerAddList[index].text),
+                            List.generate(tagsList.length,
+                                (index) => tagsList[index].text)));
+                        //Очистка полей ввода
+                        setState(() {
+                          tagsList = [];
+                          answerAddList = [];
+                        });
                       },
                       child: const Text("Добавить вопрос")),
                 ],
@@ -74,12 +110,19 @@ class AdminUI {
     return showDialog<void>(
       context: context,
       builder: (context) => AlertDialog(
-        content: TextField(
-          controller: _controller,
-          style: Theme.of(context).textTheme.bodyMedium,
+        content: Container(
+          padding: EdgeInsets.all(8),
+          decoration: BoxDecoration(
+              color: Color.fromARGB(255, 78, 87, 145),
+              borderRadius: BorderRadius.all(Radius.circular(18))),
+          child: TextField(
+            controller: _controller,
+            decoration: InputDecoration(
+              border: InputBorder.none,
+            ),
+            style: Theme.of(context).textTheme.bodyMedium,
+          ),
         ),
-        backgroundColor:
-            Theme.of(context).scaffoldBackgroundColor.withOpacity(1),
         actions: [
           TextButton(
               onPressed: () async {
@@ -106,8 +149,7 @@ class AdminUI {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            backgroundColor:
-                Theme.of(context).scaffoldBackgroundColor.withOpacity(1),
+            shape: Border.all(),
             title: GestureDetector(
               onDoubleTap: () {
                 Navigator.of(context).pop();
@@ -119,7 +161,7 @@ class AdminUI {
               ),
             ),
             content: Text(
-              "Данное приложение преднозначенно исключительно для ...",
+              "Данное приложение создано исключительно в образовательных целях",
               style: Theme.of(context).textTheme.bodyMedium,
             ),
             actions: [

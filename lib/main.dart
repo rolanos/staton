@@ -22,6 +22,7 @@ class MyApp extends StatelessWidget {
       create: (context) => QuestionBloc(),
       child: MaterialApp(
         theme: ThemeData(
+          dialogBackgroundColor: Color.fromARGB(232, 32, 30, 73),
           dividerTheme: DividerThemeData(
               thickness: 0.5, color: const Color.fromARGB(255, 228, 255, 248)),
           snackBarTheme: SnackBarThemeData(

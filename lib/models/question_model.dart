@@ -5,15 +5,16 @@ class Question {
   final int? number;
   final int? totalResponses;
   final String? question;
-  final List<String>? titels;
   final List<int>? answersAmount;
-
+  final List<String>? titels;
+  final List<String>? tags;
   Question(
       {this.question,
       this.number,
       this.totalResponses,
       this.titels,
-      this.answersAmount});
+      this.answersAmount,
+      this.tags});
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
@@ -22,6 +23,7 @@ class Question {
       'question': question,
       'titels': titels,
       'answers_amount': answersAmount,
+      'tags': tags,
     };
   }
 
@@ -31,7 +33,8 @@ class Question {
         totalResponses: map['total_responses'] as int,
         question: map['question'] as String,
         titels: List<String>.from((map['titels'])),
-        answersAmount: List<int>.from((map['answers_amount'])));
+        answersAmount: List<int>.from((map['answers_amount'])),
+        tags: List<String>.from((map['tags'])));
   }
 
   String toJson() => json.encode(toMap());
@@ -44,6 +47,7 @@ class Question {
     int? totalResponses,
     String? question,
     List<String>? titels,
+    List<String>? tags,
     List<int>? answersAmount,
   }) {
     return Question(
@@ -51,6 +55,7 @@ class Question {
       totalResponses: totalResponses ?? this.totalResponses,
       question: question ?? this.question,
       titels: titels ?? this.titels,
+      tags: tags ?? this.tags,
       answersAmount: answersAmount ?? this.answersAmount,
     );
   }

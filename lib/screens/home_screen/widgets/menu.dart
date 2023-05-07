@@ -1,9 +1,5 @@
-import 'dart:async';
-import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'admin_tile.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../logic/bloc/question_bloc.dart';
 
 ///Меню с выбором действий: поменять вопрос, информация о приложении и тд.
 class PopUpMenu extends StatelessWidget {
@@ -55,23 +51,6 @@ class PopUpMenu extends StatelessWidget {
             borderRadius: BorderRadius.circular(16.0),
           ),
           itemBuilder: ((context) => <PopupMenuEntry>[
-                PopupMenuItem(
-                  onTap: () =>
-                      context.read<QuestionBloc>().add(NextQuestionEvent()),
-                  child: Row(
-                    children: [
-                      Icon(
-                        Icons.replay_outlined,
-                        color: Colors.white,
-                      ),
-                      Text(
-                        " Поменять вопрос",
-                        style: Theme.of(context).textTheme.bodyMedium,
-                      ),
-                    ],
-                  ),
-                ),
-                PopupMenuDivider(),
                 PopupMenuItem(
                   child: GestureDetector(
                     onTap: () => AdminUI.dialogBuilder(context),

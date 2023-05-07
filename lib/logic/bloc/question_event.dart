@@ -14,9 +14,6 @@ class NextQuestionEvent extends QuestionEvent {}
 class AddQuestionEvent extends QuestionEvent {
   final String question;
   final List<String> titels;
-
-  AddQuestionEvent(
-    this.question,
-    this.titels,
-  );
+  final List<String> tags;
+  AddQuestionEvent(this.question, this.titels, this.tags);
 }
