@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:staton/models/question_model.dart';
+import 'package:staton/screens/home_screen/widgets/admin_tile.dart';
 import 'package:staton/screens/home_screen/widgets/menu.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
@@ -85,12 +86,11 @@ class _HomePageState extends State<HomePage> {
             isLoaded = true;
           }
           return Scaffold(
-            floatingActionButton: PopUpMenu(
-              context: context,
-            ),
+            floatingActionButton: PopUpMenu(context: context),
             body: Center(
               child: SwipeTo(
-                iconOnRightSwipe: IconData(0),
+                animationDuration: Duration(milliseconds: 270),
+                iconOnRightSwipe: Icons.refresh,
                 onRightSwipe: () =>
                     context.read<QuestionBloc>().add(NextQuestionEvent()),
                 child: Container(
@@ -118,6 +118,7 @@ class _HomePageState extends State<HomePage> {
                         height: padding,
                       ),
                       ListView.builder(
+                        physics: BouncingScrollPhysics(),
                         padding: const EdgeInsets.all(0),
                         shrinkWrap: true,
                         itemCount: state.question!.titels!.length,
@@ -276,6 +277,7 @@ class _HomePageState extends State<HomePage> {
   }
 }
 
+///Вычисление
 double initPercentIndicator(Question? question, int ticked, int index) {
   if (question == null) {
     return -1;
@@ -294,14 +296,32 @@ double initPercentIndicator(Question? question, int ticked, int index) {
 
 ///Виджет загрузки вопроса
 Widget _downloading(BuildContext context, String text) {
-  return Center(
+  List<Widget> widgets = <Widget>[
+    Icon(
+      Icons.help,
+      color: Colors.white,
+    )
+  ];
+  return Container(
     child: Column(
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        SpinKitDoubleBounce(
-          size: MediaQuery.of(context).size.width * 0.3,
-          color: Colors.white,
+        Center(
+          child: SpinKitCircle(
+            size: MediaQuery.of(context).size.width * 0.4,
+            itemBuilder: (context, index) {
+              final colors = [Colors.white, Color.fromARGB(255, 72, 25, 148)];
+              final color = colors[index % colors.length];
+              return Icon(
+                Icons.help,
+                color: color,
+              );
+            },
+          ),
+        ),
+        SizedBox(
+          height: 12,
         ),
         Text(
           text,

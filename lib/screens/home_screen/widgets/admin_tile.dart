@@ -6,99 +6,109 @@ import '../../../logic/bloc/question_bloc.dart';
 
 class AdminUI {
   ///Вызов формы заполнения вопроса
-  static Future<void> adminTile(BuildContext context, double padding) {
+  static Future<void> adminTile(BuildContext context) {
     List<TextEditingController> answerAddList = [];
     List<TextEditingController> tagsList = [];
     TextEditingController questionController = TextEditingController();
     return showModalBottomSheet(
+        isScrollControlled: true,
         context: context,
         backgroundColor: Color.fromARGB(255, 49, 51, 126),
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.vertical(top: Radius.circular(32))),
         builder: (context) {
           return StatefulBuilder(
             builder: (BuildContext context, StateSetter setState) => Container(
               padding: EdgeInsets.symmetric(horizontal: 12),
               decoration: BoxDecoration(
                   color: Color.fromARGB(255, 49, 51, 126),
-                  borderRadius: BorderRadius.all(Radius.circular(padding))),
+                  borderRadius: BorderRadius.all(Radius.circular(12))),
               width: double.maxFinite,
-              child: Column(
-                children: [
-                  Row(
-                    children: [
-                      //Варианты ответов на вопросы
-                      IconButton(
+              child: Padding(
+                padding: MediaQuery.of(context).viewInsets,
+                child: Container(
+                  height: MediaQuery.of(context).size.height * 0.4,
+                  child: ListView(
+                    children: <Widget>[
+                      Row(
+                        children: [
+                          //Варианты ответов на вопросы
+                          IconButton(
+                              onPressed: () {
+                                setState(() {
+                                  answerAddList.add(TextEditingController());
+                                });
+                              },
+                              icon: const Icon(Icons.question_mark)),
+                          Spacer(),
+                          IconButton(
+                              onPressed: () {
+                                setState(() {
+                                  tagsList.add(TextEditingController());
+                                });
+                              },
+                              icon: const Icon(Icons.tag)),
+                        ],
+                      ),
+                      TextField(
+                        decoration: const InputDecoration(
+                            border: InputBorder.none,
+                            hintText: "Вопрос",
+                            hintStyle: TextStyle(color: Colors.white)),
+                        controller: questionController,
+                      ),
+                      //Список полей для добавления ответов на вопрос
+                      ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: answerAddList.length,
+                        itemBuilder: (context, index) {
+                          return TextField(
+                            controller: answerAddList[index],
+                            decoration: InputDecoration(
+                                border: InputBorder.none,
+                                hintText: "Ответ ${index + 1}",
+                                hintStyle: TextStyle(color: Colors.white)),
+                          );
+                        },
+                      ),
+                      Divider(),
+                      //Список полей для добавления тэгов
+                      ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: tagsList.length,
+                        itemBuilder: (context, index) {
+                          return TextField(
+                            controller: tagsList[index],
+                            decoration: InputDecoration(
+                                border: InputBorder.none,
+                                hintText: "Тег ${index + 1}",
+                                hintStyle: TextStyle(color: Colors.white)),
+                          );
+                        },
+                      ),
+                      TextButton(
                           onPressed: () {
+                            context.read<QuestionBloc>().add(AddQuestionEvent(
+                                questionController.text,
+                                List.generate(answerAddList.length,
+                                    (index) => answerAddList[index].text),
+                                List.generate(tagsList.length,
+                                    (index) => tagsList[index].text)));
+                            //Очистка полей ввода
                             setState(() {
-                              answerAddList.add(TextEditingController());
+                              answerAddList = [];
+                              tagsList = [];
+                              answerAddList = [];
                             });
                           },
-                          icon: const Icon(Icons.question_mark)),
-                      VerticalDivider(),
-                      IconButton(
-                          onPressed: () {
-                            setState(() {
-                              tagsList.add(TextEditingController());
-                            });
-                          },
-                          icon: const Icon(Icons.tag)),
+                          child: Text(
+                            "Добавить вопрос",
+                            style: Theme.of(context).textTheme.bodyMedium,
+                          )),
                     ],
                   ),
-                  TextField(
-                    decoration: const InputDecoration(
-                        border: InputBorder.none,
-                        hintText: "Вопрос",
-                        hintStyle: TextStyle(color: Colors.white)),
-                    controller: questionController,
-                  ),
-                  //Список полей для добавления ответов на вопрос
-                  ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: answerAddList.length,
-                    itemBuilder: (context, index) {
-                      return TextField(
-                        controller: answerAddList[index],
-                        decoration: InputDecoration(
-                            border: InputBorder.none,
-                            hintText: "Ответ ${index + 1}",
-                            hintStyle: TextStyle(color: Colors.white)),
-                      );
-                    },
-                  ),
-                  Divider(),
-                  //Список полей для добавления тэгов
-                  ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: tagsList.length,
-                    itemBuilder: (context, index) {
-                      return TextField(
-                        controller: tagsList[index],
-                        decoration: InputDecoration(
-                            border: InputBorder.none,
-                            hintText: "Ответ ${index + 1}",
-                            hintStyle: TextStyle(color: Colors.white)),
-                      );
-                    },
-                  ),
-                  TextButton(
-                      style: ButtonStyle(
-                          backgroundColor: MaterialStatePropertyAll(
-                              Color.fromARGB(255, 117, 46, 233))),
-                      onPressed: () {
-                        context.read<QuestionBloc>().add(AddQuestionEvent(
-                            questionController.text,
-                            List.generate(answerAddList.length,
-                                (index) => answerAddList[index].text),
-                            List.generate(tagsList.length,
-                                (index) => tagsList[index].text)));
-                        //Очистка полей ввода
-                        setState(() {
-                          tagsList = [];
-                          answerAddList = [];
-                        });
-                      },
-                      child: const Text("Добавить вопрос")),
-                ],
-              ), //There is filling form
+                ),
+              ),
             ),
           );
         });
@@ -131,7 +141,7 @@ class AdminUI {
                 if (answer.exists &&
                     answer.value.toString() == _controller.text) {
                   Navigator.of(context).pop();
-                  adminTile(context, 16);
+                  adminTile(context);
                 }
               },
               child: Text(
