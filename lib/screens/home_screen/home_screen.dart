@@ -90,6 +90,7 @@ class _HomePageState extends State<HomePage> {
               child: SwipeTo(
                 animationDuration: Duration(milliseconds: 270),
                 iconOnRightSwipe: Icons.refresh,
+                iconColor: Color.fromARGB(255, 152, 145, 215),
                 onRightSwipe: () {
                   context.read<QuestionBloc>().add(NextQuestionEvent());
                   showStat = false;
@@ -147,6 +148,8 @@ class _HomePageState extends State<HomePage> {
                                       }
                                     : null,
                                 style: ButtonStyle(
+                                  overlayColor: MaterialStateProperty.all(
+                                      Colors.transparent),
                                   backgroundColor: MaterialStateProperty
                                       .all<Color>(isTicked[index]
                                           ? const Color.fromARGB(
@@ -170,21 +173,23 @@ class _HomePageState extends State<HomePage> {
                                           horizontal: 0),
                                       barRadius: Radius.circular(padding),
                                       animation: true,
-                                      lineHeight: 8,
-                                      backgroundColor: Theme.of(context)
-                                          .scaffoldBackgroundColor,
+                                      lineHeight: 10,
+                                      backgroundColor:
+                                          Color.fromARGB(255, 152, 145, 215),
                                       animationDuration: 1500,
                                       percent: initPercentIndicator(
                                           state.question,
                                           currentTickedIndex,
                                           index),
-                                      progressColor: const Color.fromARGB(
-                                          255, 117, 46, 233),
+                                      progressColor:
+                                          Color.fromARGB(255, 139, 81, 255),
                                       trailing: Text(
-                                        "${(state.question!.totalResponses! == 0) ? (index == currentTickedIndex) ? (100 * ((state.question!.answersAmount![index] + 1) / (state.question!.totalResponses! + 1))).toStringAsFixed(1) : (100 * (state.question!.answersAmount![index]) / (state.question!.totalResponses! + 1)).toStringAsFixed(1) : (100 * (state.question!.answersAmount![index] / (state.question!.totalResponses!))).toStringAsFixed(1)}%",
+                                        " ${(state.question!.totalResponses! == 0) ? (index == currentTickedIndex) ? (100 * ((state.question!.answersAmount![index] + 1) / (state.question!.totalResponses! + 1))).toStringAsFixed(1) : (100 * (state.question!.answersAmount![index]) / (state.question!.totalResponses! + 1)).toStringAsFixed(1) : (100 * (state.question!.answersAmount![index] / (state.question!.totalResponses!))).toStringAsFixed(1)}%",
                                         style: Theme.of(context)
                                             .textTheme
-                                            .bodySmall,
+                                            .bodySmall!
+                                            .copyWith(
+                                                fontWeight: FontWeight.w600),
                                       ),
                                     )
                                   : const SizedBox(
