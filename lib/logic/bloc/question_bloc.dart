@@ -68,7 +68,6 @@ class QuestionBloc extends Bloc<QuestionEvent, QuestionInitial> {
       final ref = FirebaseDatabase.instance.ref();
       final amount = await ref.child('data/number_of_questions').get();
       final tags;
-      var tagAmount = await ref.child('data/tag_length').get();
       try {
         tags = await ref.child('data/tags').get();
         Set<String> uniq = {};

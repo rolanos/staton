@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:staton/models/question_model.dart';
-import 'package:staton/screens/home_screen/widgets/admin_tile.dart';
 import 'package:staton/screens/home_screen/widgets/menu.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
@@ -91,8 +90,14 @@ class _HomePageState extends State<HomePage> {
               child: SwipeTo(
                 animationDuration: Duration(milliseconds: 270),
                 iconOnRightSwipe: Icons.refresh,
-                onRightSwipe: () =>
-                    context.read<QuestionBloc>().add(NextQuestionEvent()),
+                onRightSwipe: () {
+                  context.read<QuestionBloc>().add(NextQuestionEvent());
+                  showStat = false;
+                  currentTickedIndex = -1;
+                  for (var i in isTicked) {
+                    i = false;
+                  }
+                },
                 child: Container(
                   margin: EdgeInsets.all(padding),
                   padding: EdgeInsets.all(padding),
@@ -296,12 +301,6 @@ double initPercentIndicator(Question? question, int ticked, int index) {
 
 ///Виджет загрузки вопроса
 Widget _downloading(BuildContext context, String text) {
-  List<Widget> widgets = <Widget>[
-    Icon(
-      Icons.help,
-      color: Colors.white,
-    )
-  ];
   return Container(
     child: Column(
       mainAxisAlignment: MainAxisAlignment.center,

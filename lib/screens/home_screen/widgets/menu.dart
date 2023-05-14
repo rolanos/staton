@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'admin_tile.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../logic/bloc/question_bloc.dart';
+import 'package:staton/logic/bloc/question_bloc.dart';
+import 'admin_tile.dart';
 
 ///Меню с выбором действий: поменять вопрос, информация о приложении и тд.
 class PopUpMenu extends StatelessWidget {
@@ -33,19 +33,22 @@ class PopUpMenu extends StatelessWidget {
             borderRadius: BorderRadius.circular(16.0),
           ),
           itemBuilder: ((context) => <PopupMenuEntry>[
+                //Информация о проекте
                 PopupMenuItem(
-                  child: GestureDetector(
-                    onTap: () => AdminUI.dialogBuilder(context),
+                  child: TextButton(
+                    onPressed: () => AdminUI.dialogBuilder(context),
                     child: Row(
                       children: [
                         Icon(
                           Icons.info_outline,
                           color: Colors.white,
                         ),
+                        Spacer(),
                         Text(
-                          " Информация",
+                          "Информация",
                           style: Theme.of(context).textTheme.bodyMedium,
-                        )
+                        ),
+                        Spacer(),
                       ],
                     ),
                   ),
