@@ -11,6 +11,12 @@ class QuestionAnswerEvent extends QuestionEvent {
 
 class NextQuestionEvent extends QuestionEvent {}
 
+class GetQuestionInfoEvent extends QuestionEvent {
+  final int number;
+
+  GetQuestionInfoEvent(this.number);
+}
+
 class AddQuestionEvent extends QuestionEvent {
   final String question;
   final List<String> titels;

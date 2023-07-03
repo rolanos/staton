@@ -2,6 +2,8 @@ import 'package:bloc/bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:meta/meta.dart';
+import 'package:staton/models/answer.dart';
+import 'package:staton/models/db_model.dart';
 import '../../models/question_model.dart';
 import 'dart:math';
 import 'dart:convert';
@@ -45,9 +47,21 @@ class QuestionBloc extends Bloc<QuestionEvent, QuestionInitial> {
       }
     });
     on<QuestionAnswerEvent>((event, emit) async {
-      final ref = FirebaseDatabase.instance.ref('question/${event.number}');
+      final ref =
+          FirebaseDatabase.instance.ref('question/${event.question.number}');
       final prefs = await SharedPreferences.getInstance();
-      await prefs.setBool('${event.number}', true);
+      final DBConnect db = DBConnect();
+      try {
+        await db.open();
+        final Answer answer = Answer(
+            id: event.question.number ?? -1,
+            question: event.question.question ?? "-",
+            answer: event.answerNumber);
+        db.insertQuestion(answer);
+      } catch (e) {
+        print(e);
+      }
+      await prefs.setBool('${event.question.number}', true);
       await ref.runTransaction(
         (Object? post) {
           // Ensure a post at the ref exists.
@@ -97,6 +111,15 @@ class QuestionBloc extends Bloc<QuestionEvent, QuestionInitial> {
       await ref
           .child('question/${(amount.value as int) + 1}')
           .set(newQuestion.toMap());
+    });
+    on<GetQuestionInfoEvent>((event, emit) async {
+      final ref = FirebaseDatabase.instance.ref();
+      final snapshot = await ref.child('question/${event.number}').get();
+      if (snapshot.exists) {
+        Map<String, dynamic> body = jsonDecode(jsonEncode(snapshot.value));
+        final newState = Question.fromMap(body);
+        emit(QuestionInitial(question: newState));
+      }
     });
   }
 }

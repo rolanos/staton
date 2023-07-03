@@ -79,9 +79,6 @@ class _HomePageState extends State<HomePage> {
         //Получен вопрос от сервера
         if (state.question != null) {
           if (isLoaded == false) {
-            for (int i = 0; i < state.question!.titels!.length; i++) {
-              isTicked.add(false);
-            }
             isLoaded = true;
           }
           return Scaffold(
@@ -129,6 +126,11 @@ class _HomePageState extends State<HomePage> {
                         shrinkWrap: true,
                         itemCount: state.question!.titels!.length,
                         itemBuilder: (context, index) {
+                          for (int i = 0;
+                              i < state.question!.titels!.length;
+                              i++) {
+                            isTicked.add(false);
+                          }
                           return Column(
                             crossAxisAlignment: CrossAxisAlignment.stretch,
                             mainAxisSize: MainAxisSize.max,
@@ -252,8 +254,9 @@ class _HomePageState extends State<HomePage> {
                                       showStat = true;
                                     });
                                     context.read<QuestionBloc>().add(
-                                        QuestionAnswerEvent(state.question!,
-                                            currentTickedIndex));
+                                          QuestionAnswerEvent(state.question!,
+                                              currentTickedIndex),
+                                        );
                                   }
                                 }
                               },

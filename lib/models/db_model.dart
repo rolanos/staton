@@ -10,9 +10,10 @@ class DBConnect {
   Database? database;
 
   //Открытие и инициализация БД
-  void open() async {
+  Future<void> open() async {
+    final String path = await getDatabasesPath();
     database = await openDatabase(
-      join(await getDatabasesPath(), 'staton.db'),
+      join(path, 'staton.db'),
       onCreate: (db, version) {
         return db.execute(
           'CREATE TABLE question(id INTEGER PRIMARY KEY, question TEXT, answer_number INTEGER)',
@@ -22,16 +23,26 @@ class DBConnect {
     );
   }
 
+  void close() async {
+    if (database != null) {
+      database!.close();
+    }
+  }
+
   //Вставка нового ответа в БД
   Future<void> insertQuestion(Answer answer) async {
     if (database == null) {
       return;
     } else {
       //Проверка наличия ответа на определённый вопрос
-      final containCheck = await database!
-          .query("SELECT * FROM questions WHERE id = ${answer.id}");
-      if (containCheck.isEmpty) {
-        await database!.insert('question', answer.toMap());
+      try {
+        final containCheck = await database!
+            .query('question', where: 'id = ?', whereArgs: [answer.id]);
+        if (containCheck.isEmpty) {
+          await database!.insert('question', answer.toMap());
+        }
+      } catch (e) {
+        print(e);
       }
     }
   }
@@ -41,16 +52,21 @@ class DBConnect {
     if (database == null) {
       return [];
     } else {
-      final List<Map<String, dynamic>> maps =
-          await database!.query('SELECT * FROM question');
-      return List.generate(
-        maps.length,
-        (index) => Answer(
-          id: maps[index]['id'],
-          question: maps[index]['question'],
-          answer: maps[index]['answer_number'],
-        ),
-      );
+      try {
+        final List<Map<String, dynamic>> maps =
+            await database!.query('question');
+        return List.generate(
+          maps.length,
+          (index) => Answer(
+            id: maps[index]['id'],
+            question: maps[index]['question'],
+            answer: maps[index]['answer_number'],
+          ),
+        );
+      } catch (e) {
+        print(e);
+      }
+      return [];
     }
   }
 }
