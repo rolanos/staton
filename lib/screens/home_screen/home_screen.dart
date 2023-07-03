@@ -252,8 +252,8 @@ class _HomePageState extends State<HomePage> {
                                       showStat = true;
                                     });
                                     context.read<QuestionBloc>().add(
-                                        QuestionAnswerEvent(
-                                            numberTicked, currentTickedIndex));
+                                        QuestionAnswerEvent(state.question!,
+                                            currentTickedIndex));
                                   }
                                 }
                               },

@@ -4,9 +4,9 @@ part of 'question_bloc.dart';
 abstract class QuestionEvent {}
 
 class QuestionAnswerEvent extends QuestionEvent {
-  final int number;
+  final Question question;
   final int answerNumber;
-  QuestionAnswerEvent(this.number, this.answerNumber);
+  QuestionAnswerEvent(this.question, this.answerNumber);
 }
 
 class NextQuestionEvent extends QuestionEvent {}

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:staton/logic/bloc/question_bloc.dart';
+import 'package:staton/screens/home_screen/history_screen.dart';
 import 'admin_tile.dart';
 
 ///Меню с выбором действий: поменять вопрос, информация о приложении и тд.
@@ -33,6 +32,31 @@ class PopUpMenu extends StatelessWidget {
             borderRadius: BorderRadius.circular(16.0),
           ),
           itemBuilder: ((context) => <PopupMenuEntry>[
+                //История
+                PopupMenuItem(
+                  child: TextButton(
+                    onPressed: () => Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => HistoryScreen(),
+                      ),
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.info_outline,
+                          color: Colors.white,
+                        ),
+                        Spacer(),
+                        Text(
+                          "История",
+                          style: Theme.of(context).textTheme.bodyMedium,
+                        ),
+                        Spacer(),
+                      ],
+                    ),
+                  ),
+                ),
+                PopupMenuDivider(),
                 //Информация о проекте
                 PopupMenuItem(
                   child: TextButton(
