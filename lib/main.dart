@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:staton/screens/main_screen.dart';
 import 'firebase_options.dart';
+import 'screens/home_screen/history_screen.dart';
 import 'screens/home_screen/home_screen.dart';
 import 'logic/question_bloc/question_bloc.dart';
 
@@ -11,18 +13,38 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  runApp(const MyApp());
+  runApp(MyApp());
 }
 
+// ignore: must_be_immutable
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
+  MyApp({super.key});
+  int pageIndex = 0;
+  final List<Widget> screens = <Widget>[HomePage(), HistoryScreen()];
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => QuestionBloc(),
       child: MaterialApp(
         theme: ThemeData(
+          appBarTheme: AppBarTheme(
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+          ),
+          buttonTheme: ButtonThemeData(
+            highlightColor: Color.fromARGB(200, 64, 38, 166),
+          ),
+          bottomNavigationBarTheme: BottomNavigationBarThemeData(
+            backgroundColor: Color.fromARGB(105, 35, 26, 92),
+            selectedIconTheme: IconThemeData(color: Colors.white),
+            unselectedIconTheme: IconThemeData(color: Colors.grey.shade600),
+            selectedLabelStyle:
+                GoogleFonts.roboto(fontSize: 14, color: Colors.white),
+            unselectedLabelStyle:
+                GoogleFonts.roboto(fontSize: 14, color: Colors.grey.shade600),
+            selectedItemColor: Colors.white,
+            unselectedItemColor: Colors.grey.shade600,
+          ),
           dialogBackgroundColor: Color.fromARGB(232, 32, 30, 73),
           dividerTheme: DividerThemeData(
               thickness: 0.5, color: const Color.fromARGB(255, 228, 255, 248)),
@@ -55,7 +77,7 @@ class MyApp extends StatelessWidget {
             ),
           ),
         ),
-        home: const HomePage(),
+        home: MainScreen(),
       ),
     );
   }

@@ -15,7 +15,8 @@ class HistoryScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,
-        title: Text("История ответов"),
+        title:
+            Align(alignment: Alignment.center, child: Text("История ответов")),
       ),
       body: FutureBuilder(
         future: db.open(),
