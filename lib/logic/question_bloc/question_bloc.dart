@@ -81,20 +81,27 @@ class QuestionBloc extends Bloc<QuestionEvent, QuestionInitial> {
     on<AddQuestionEvent>((event, emit) async {
       final ref = FirebaseDatabase.instance.ref();
       final amount = await ref.child('data/number_of_questions').get();
-      final tags;
+      final DataSnapshot tags;
       try {
         tags = await ref.child('data/tags').get();
-        Set<String> uniq = {};
-        for (var i in (List<String>.from(tags.value))) {
-          uniq.add(i);
-        }
-        for (var i in event.tags) {
-          if (uniq.contains(i) == false) {
-            uniq.add(i);
+        final map = tags.value;
+        for (var tag in event.tags) {
+          final DataSnapshot? response =
+              await ref.child('data/tags/${tag}').get();
+          if (response == null || !response.exists) {
+            await ref
+                .child('data/tags/${tag}')
+                .set([(amount.value as int) + 1].asMap());
+          } else {
+            List<Object?> list = response.value as List<Object?>;
+            list = list.toList();
+            list.add((amount.value as int) + 1);
+            await ref.child('data/tags/${tag}').set(list.asMap());
+            // list.add((amount.value as int) + 1);
+            // Map<String, Object?> newMap = {tag: list.map((e) => e)};
+            // await ref.child('data/tags/${tag}').update(newMap);
           }
         }
-        List<String> list = List<String>.from(uniq);
-        await ref.child('data/tags').set(list);
       } catch (e) {
         print(e);
       }

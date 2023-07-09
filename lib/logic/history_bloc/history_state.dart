@@ -1,12 +1,16 @@
 part of 'history_bloc.dart';
 
 @immutable
-abstract class HistoryState {}
-
-class HistoryInitial extends HistoryState {
+class HistoryState {
   final List<Answer>? list;
 
-  HistoryInitial({this.list = const []});
+  HistoryState({this.list});
 }
 
-class HistorySearching extends HistoryState {}
+class HistoryInitial extends HistoryState {
+  HistoryInitial({super.list});
+}
+
+class HistorySearching extends HistoryState {
+  HistorySearching({super.list});
+}
