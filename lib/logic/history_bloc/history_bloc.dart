@@ -7,7 +7,6 @@ part 'history_event.dart';
 part 'history_state.dart';
 
 class HistoryBloc extends Bloc<HistoryEvent, HistoryState> {
-  Null a;
   HistoryBloc() : super(HistoryInitial()) {
     on<GetAllHistoryEvent>((event, emit) async {
       final DBConnect db = DBConnect();

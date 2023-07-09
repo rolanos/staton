@@ -1,13 +1,21 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 
+///Модель вопроса
 class Question {
+  //Номер вопроса
   final int? number;
+  //Всего ответов
   final int? totalResponses;
+  //Описание вопроса
   final String? question;
+  //Список с количеством ответов на вопросы соответственно
   final List<int>? answersAmount;
+  //Варианты ответов
   final List<String>? titels;
+  //Теги
   final List<String>? tags;
+
   Question(
       {this.question,
       this.number,
