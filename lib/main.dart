@@ -4,7 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'firebase_options.dart';
 import 'screens/home_screen/home_screen.dart';
-import './logic/bloc/question_bloc.dart';
+import 'logic/question_bloc/question_bloc.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -35,7 +35,7 @@ class MyApp extends StatelessWidget {
               ),
             ),
           ),
-          scaffoldBackgroundColor: const Color.fromARGB(101, 89, 92, 190),
+          scaffoldBackgroundColor: Color.fromARGB(100, 64, 68, 168),
           iconTheme: IconThemeData(color: Colors.white),
           textTheme: TextTheme(
             //texts like question

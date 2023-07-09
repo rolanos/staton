@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:staton/models/answer.dart';
+import 'package:staton/models/answer_model.dart';
 import 'package:staton/models/db_model.dart';
 
-import '../../logic/bloc/question_bloc.dart';
+import 'package:staton/logic/question_bloc/question_bloc.dart';
 
 class HistoryScreen extends StatelessWidget {
   HistoryScreen({super.key});
@@ -13,6 +13,10 @@ class HistoryScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     int lastTickedCard = -1;
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        title: Text("История ответов"),
+      ),
       body: FutureBuilder(
         future: db.open(),
         builder: (context, _) {
@@ -50,7 +54,7 @@ class HistoryScreen extends StatelessWidget {
                       },
                       child: Container(
                         decoration: BoxDecoration(
-                            color: const Color.fromARGB(255, 117, 46, 233),
+                            color: Color.fromARGB(255, 104, 43, 201),
                             borderRadius: BorderRadius.all(Radius.circular(8))),
                         child: BlocBuilder<QuestionBloc, QuestionInitial>(
                           builder: (context, blocState) {
@@ -75,6 +79,9 @@ class HistoryScreen extends StatelessWidget {
                                     ],
                                   ),
                                 ),
+                                const SizedBox(
+                                  height: 12,
+                                ),
                                 (showInfo[index])
                                     ? SizedBox(
                                         child: ListView.builder(
@@ -89,7 +96,7 @@ class HistoryScreen extends StatelessWidget {
                                                     Text(blocState
                                                         .question!.titels![i]),
                                                     Text(
-                                                        "${(blocState.question!.answersAmount![i] / blocState.question!.totalResponses!).toStringAsFixed(1)}%")
+                                                        "${(100 * blocState.question!.answersAmount![i] / blocState.question!.totalResponses!).toStringAsFixed(1)}%")
                                                   ],
                                                 ),
                                               );

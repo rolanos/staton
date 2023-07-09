@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
-import 'package:staton/models/answer.dart';
+import 'package:staton/models/answer_model.dart';
 
 //Класс созданный для управления локальной базой данныъ
 class DBConnect {

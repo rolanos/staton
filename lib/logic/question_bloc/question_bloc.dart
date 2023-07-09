@@ -2,7 +2,7 @@ import 'package:bloc/bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:meta/meta.dart';
-import 'package:staton/models/answer.dart';
+import 'package:staton/models/answer_model.dart';
 import 'package:staton/models/db_model.dart';
 import '../../models/question_model.dart';
 import 'dart:math';

@@ -11,7 +11,7 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:swipe_to/swipe_to.dart';
 
-import '../../logic/bloc/question_bloc.dart';
+import 'package:staton/logic/question_bloc/question_bloc.dart';
 
 ///Главная страница с вопросом пользователю
 class HomePage extends StatefulWidget {
@@ -65,7 +65,7 @@ class _HomePageState extends State<HomePage> {
       systemNavigationBarColor:
           (MediaQuery.of(context).platformBrightness == Brightness.dark)
               ? const Color.fromARGB(101, 89, 92, 190)
-              : const Color.fromARGB(232, 14, 12, 61),
+              : Color.fromARGB(232, 7, 6, 45),
       systemStatusBarContrastEnforced: true,
     ));
 
@@ -85,7 +85,7 @@ class _HomePageState extends State<HomePage> {
             floatingActionButton: PopUpMenu(context: context),
             body: Center(
               child: SwipeTo(
-                animationDuration: Duration(milliseconds: 270),
+                animationDuration: Duration(milliseconds: 120),
                 iconOnRightSwipe: Icons.refresh,
                 iconColor: Color.fromARGB(255, 152, 145, 215),
                 onRightSwipe: () {
