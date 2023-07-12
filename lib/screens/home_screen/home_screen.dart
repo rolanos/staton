@@ -18,7 +18,7 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   late StreamSubscription<ConnectivityResult> _connectivitySubscription;
   final Connectivity _connectivity = Connectivity();
   final padding = 18.0;
@@ -58,215 +58,238 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<QuestionBloc, QuestionInitial>(
+    return BlocBuilder<QuestionBloc, QuestionState>(
       builder: (context, state) {
-        //При отсутствие подключения к интернету
-        if (_connectionStatus == ConnectivityResult.none) {
-          return _downloading(context, "Нет подключения к интернету");
-        }
-        //Получен вопрос от сервера
-        if (state.question != null) {
-          if (isLoaded == false) {
-            isLoaded = true;
+        if (state is QuestionInitial) {
+          //При отсутствие подключения к интернету
+          if (_connectionStatus == ConnectivityResult.none) {
+            return _downloading(context, "Нет подключения к интернету");
           }
-          return Center(
-            child: SwipeTo(
-              animationDuration: Duration(milliseconds: 120),
-              iconOnRightSwipe: Icons.refresh,
-              iconColor: Color.fromARGB(255, 152, 145, 215),
-              onRightSwipe: () {
-                context.read<QuestionBloc>().add(NextQuestionEvent());
-                showStat = false;
-                currentTickedIndex = -1;
-                // ignore: unused_local_variable
-                for (var i in isTicked) {
-                  i = false;
-                }
-              },
-              child: Container(
-                margin: EdgeInsets.all(padding),
-                padding: EdgeInsets.all(padding),
-                width: double.maxFinite,
-                decoration: BoxDecoration(
-                    borderRadius:
-                        BorderRadius.all(Radius.circular(padding * 1.33)),
-                    color: Theme.of(context).scaffoldBackgroundColor),
-                constraints: BoxConstraints(
-                    maxHeight: MediaQuery.of(context).size.height * 0.6),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        "${state.question!.question}",
-                        maxLines: null,
-                        style: Theme.of(context).textTheme.titleMedium,
-                      ),
-                    ),
-                    Divider(
-                      height: padding,
-                    ),
-                    ListView.builder(
-                      physics: BouncingScrollPhysics(),
-                      padding: const EdgeInsets.all(0),
-                      shrinkWrap: true,
-                      itemCount: state.question!.titels!.length,
-                      itemBuilder: (context, index) {
-                        for (int i = 0;
-                            i < state.question!.titels!.length;
-                            i++) {
-                          isTicked.add(false);
-                        }
-                        return Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          mainAxisSize: MainAxisSize.max,
-                          children: [
-                            TextButton(
-                              onPressed: (!showStat)
-                                  ? () {
-                                      if (currentTickedIndex != -1 &&
-                                          index != currentTickedIndex) {
-                                        isTicked[currentTickedIndex] = false;
-                                      }
-                                      setState(() {
-                                        isTicked[index] = !isTicked[index];
-                                      });
-                                      currentTickedIndex = index;
-                                      numberTicked = state.question!.number!;
-                                    }
-                                  : null,
-                              style: ButtonStyle(
-                                overlayColor: MaterialStateProperty.all(
-                                    Colors.transparent),
-                                backgroundColor:
-                                    MaterialStateProperty.all<Color>(
-                                        isTicked[index]
-                                            ? const Color.fromARGB(
-                                                255, 117, 46, 233)
-                                            : const Color.fromARGB(0, 0, 0, 0)),
-                              ),
-                              child: Align(
-                                alignment: Alignment.centerLeft,
-                                child: Text(
-                                  state.question!.titels![index],
-                                  maxLines: null,
-                                  overflow: TextOverflow.fade,
-                                  style: Theme.of(context).textTheme.bodyMedium,
-                                ),
-                              ),
-                            ),
-                            (showStat)
-                                ? LinearPercentIndicator(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 0),
-                                    barRadius: Radius.circular(padding),
-                                    animation: true,
-                                    lineHeight: 10,
-                                    backgroundColor:
-                                        Color.fromARGB(255, 152, 145, 215),
-                                    animationDuration: 1500,
-                                    percent: initPercentIndicator(
-                                        state.question,
-                                        currentTickedIndex,
-                                        index),
-                                    progressColor:
-                                        Color.fromARGB(255, 139, 81, 255),
-                                    trailing: Text(
-                                      " ${(state.question!.totalResponses! == 0) ? (index == currentTickedIndex) ? (100 * ((state.question!.answersAmount![index] + 1) / (state.question!.totalResponses! + 1))).toStringAsFixed(1) : (100 * (state.question!.answersAmount![index]) / (state.question!.totalResponses! + 1)).toStringAsFixed(1) : (100 * (state.question!.answersAmount![index] / (state.question!.totalResponses!))).toStringAsFixed(1)}%",
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodySmall!
-                                          .copyWith(
-                                              fontWeight: FontWeight.w600),
-                                    ),
-                                  )
-                                : const SizedBox(
-                                    height: 4,
-                                    width: double.maxFinite,
-                                  ),
-                          ],
-                        );
-                      },
-                    ),
-                    Row(
+          //Получен вопрос от сервера
+          if (state.question != null) {
+            if (isLoaded == false) {
+              isLoaded = true;
+            }
+            return Center(
+              child: SwipeTo(
+                animationDuration: const Duration(milliseconds: 120),
+                iconOnRightSwipe: Icons.refresh,
+                iconColor: Color.fromARGB(255, 152, 145, 215),
+                onRightSwipe: () {
+                  context.read<QuestionBloc>().add(NextQuestionEvent());
+                  showStat = false;
+                  currentTickedIndex = -1;
+                  // ignore: unused_local_variable
+                  for (var i in isTicked) {
+                    i = false;
+                  }
+                },
+                child: Container(
+                  margin: EdgeInsets.all(padding),
+                  padding: EdgeInsets.all(padding),
+                  width: double.maxFinite,
+                  decoration: BoxDecoration(
+                      borderRadius:
+                          BorderRadius.all(Radius.circular(padding * 1.33)),
+                      color: Theme.of(context).scaffoldBackgroundColor),
+                  constraints: BoxConstraints(
+                      maxHeight: MediaQuery.of(context).size.height * 0.6),
+                  child: AnimatedSize(
+                    duration: const Duration(milliseconds: 120),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
                       children: [
                         Align(
                           alignment: Alignment.centerLeft,
-                          child: Text(
-                            "${state.question!.totalResponses!} отв.",
-                            style: Theme.of(context).textTheme.titleSmall,
+                          child: AnimatedSwitcher(
+                            duration: const Duration(milliseconds: 120),
+                            child: Text(
+                              "${state.question!.question}",
+                              maxLines: null,
+                              style: Theme.of(context).textTheme.titleMedium,
+                            ),
                           ),
                         ),
-                        const Spacer(),
-                        Align(
-                          alignment: Alignment.centerRight,
-                          child: IconButton(
-                            splashRadius: 0.1,
-                            onPressed: () async {
-                              if (showStat) {
-                                setState(() {
-                                  context
-                                      .read<QuestionBloc>()
-                                      .add(NextQuestionEvent());
-                                  isTicked[currentTickedIndex] = false;
-                                });
-                                showStat = false;
-                              } else {
-                                var isTickedTile = false;
-                                for (var i in isTicked) {
-                                  if (i == true) {
-                                    isTickedTile = true;
-                                  }
-                                }
-                                if (!isTickedTile) {
-                                  final snackBar = SnackBar(
-                                    width: MediaQuery.of(context).size.width *
-                                        0.45,
-                                    duration:
-                                        const Duration(milliseconds: 1400),
-                                    content: Center(
+                        Divider(
+                          height: padding,
+                        ),
+                        ListView.builder(
+                          physics: BouncingScrollPhysics(),
+                          padding: const EdgeInsets.all(0),
+                          shrinkWrap: true,
+                          itemCount: state.question!.titels!.length,
+                          itemBuilder: (context, index) {
+                            for (int i = 0;
+                                i < state.question!.titels!.length;
+                                i++) {
+                              isTicked.add(false);
+                            }
+                            return Column(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              mainAxisSize: MainAxisSize.max,
+                              children: [
+                                TextButton(
+                                  onPressed: (!showStat)
+                                      ? () {
+                                          if (currentTickedIndex != -1 &&
+                                              index != currentTickedIndex) {
+                                            isTicked[currentTickedIndex] =
+                                                false;
+                                          }
+                                          setState(() {
+                                            isTicked[index] = !isTicked[index];
+                                          });
+                                          currentTickedIndex = index;
+                                          numberTicked =
+                                              state.question!.number!;
+                                        }
+                                      : null,
+                                  style: ButtonStyle(
+                                    overlayColor: MaterialStateProperty.all(
+                                        Colors.transparent),
+                                    backgroundColor: MaterialStateProperty
+                                        .all<Color>(isTicked[index]
+                                            ? const Color.fromARGB(
+                                                255, 117, 46, 233)
+                                            : const Color.fromARGB(0, 0, 0, 0)),
+                                  ),
+                                  child: Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: AnimatedSwitcher(
+                                      duration:
+                                          const Duration(milliseconds: 120),
                                       child: Text(
-                                        "Выберите ответ",
+                                        state.question!.titels![index],
+                                        maxLines: null,
+                                        overflow: TextOverflow.fade,
                                         style: Theme.of(context)
                                             .textTheme
                                             .bodyMedium,
                                       ),
                                     ),
-                                  );
-                                  ScaffoldMessenger.of(context)
-                                      .showSnackBar(snackBar);
-                                } else {
-                                  setState(() {
-                                    showStat = true;
-                                  });
-                                  context.read<QuestionBloc>().add(
-                                        QuestionAnswerEvent(state.question!,
-                                            currentTickedIndex),
-                                      );
-                                }
-                              }
-                            },
-                            alignment: Alignment.centerRight,
-                            icon: (showStat)
-                                ? const Icon(
-                                    Icons.check,
-                                  )
-                                : const Icon(
-                                    Icons.arrow_forward,
                                   ),
-                          ),
+                                ),
+                                (showStat)
+                                    ? LinearPercentIndicator(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 0),
+                                        barRadius: Radius.circular(padding),
+                                        animation: true,
+                                        lineHeight: 10,
+                                        linearGradient: LinearGradient(colors: [
+                                          Color.fromARGB(185, 85, 68, 158),
+                                          Color.fromARGB(255, 67, 40, 186)
+                                        ]),
+                                        backgroundColor:
+                                            Color.fromARGB(255, 208, 205, 239),
+                                        animationDuration: 1500,
+                                        percent: initPercentIndicator(
+                                            state.question,
+                                            currentTickedIndex,
+                                            index),
+                                        trailing: Text(
+                                          " ${(state.question!.totalResponses! == 0) ? (index == currentTickedIndex) ? (100 * ((state.question!.answersAmount![index] + 1) / (state.question!.totalResponses! + 1))).toStringAsFixed(1) : (100 * (state.question!.answersAmount![index]) / (state.question!.totalResponses! + 1)).toStringAsFixed(1) : (100 * (state.question!.answersAmount![index] / (state.question!.totalResponses!))).toStringAsFixed(1)}%",
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodySmall!
+                                              .copyWith(
+                                                  fontWeight: FontWeight.w600),
+                                        ),
+                                      )
+                                    : const SizedBox(
+                                        height: 4,
+                                        width: double.maxFinite,
+                                      ),
+                              ],
+                            );
+                          },
+                        ),
+                        Row(
+                          children: [
+                            Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                "${state.question!.totalResponses!} отв.",
+                                style: Theme.of(context).textTheme.titleSmall,
+                              ),
+                            ),
+                            const Spacer(),
+                            Align(
+                              alignment: Alignment.centerRight,
+                              child: IconButton(
+                                splashRadius: 0.1,
+                                onPressed: () async {
+                                  if (showStat) {
+                                    setState(() {
+                                      context
+                                          .read<QuestionBloc>()
+                                          .add(NextQuestionEvent());
+                                      isTicked[currentTickedIndex] = false;
+                                    });
+                                    showStat = false;
+                                  } else {
+                                    var isTickedTile = false;
+                                    for (var i in isTicked) {
+                                      if (i == true) {
+                                        isTickedTile = true;
+                                      }
+                                    }
+                                    if (!isTickedTile) {
+                                      final snackBar = SnackBar(
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                0.45,
+                                        duration:
+                                            const Duration(milliseconds: 1400),
+                                        content: Center(
+                                          child: Text(
+                                            "Выберите ответ",
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodyMedium,
+                                          ),
+                                        ),
+                                      );
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(snackBar);
+                                    } else {
+                                      setState(() {
+                                        showStat = true;
+                                      });
+                                      context.read<QuestionBloc>().add(
+                                            QuestionAnswerEvent(state.question!,
+                                                currentTickedIndex),
+                                          );
+                                    }
+                                  }
+                                },
+                                alignment: Alignment.centerRight,
+                                icon: (showStat)
+                                    ? const Icon(
+                                        Icons.check,
+                                      )
+                                    : const Icon(
+                                        Icons.arrow_forward,
+                                      ),
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
-                  ],
+                  ),
                 ),
               ),
-            ),
-          );
+            );
+          } else {
+            //Загрузка вопроса
+            return _downloading(context, "Загрузка");
+          }
         } else {
-          //Загрузка вопроса
-          return _downloading(context, "Загрузка");
+          return Center(
+              child: CircularProgressIndicator(
+            color: Colors.white,
+          ));
         }
       },
     );

@@ -12,3 +12,10 @@ class SearchHistoryEvent extends HistoryEvent {
 
   SearchHistoryEvent({required this.query});
 }
+
+class GetQuestionInfoEvent extends HistoryEvent {
+  //Номер вопроса
+  final int number;
+
+  GetQuestionInfoEvent(this.number);
+}

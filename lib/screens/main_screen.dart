@@ -4,6 +4,7 @@ import 'package:staton/logic/question_bloc/question_bloc.dart';
 import 'home_screen/history_screen.dart';
 import 'home_screen/home_screen.dart';
 import 'home_screen/widgets/admin_tile.dart';
+import 'home_screen/widgets/themes.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -24,7 +25,7 @@ class _MainScreenState extends State<MainScreen> {
               leading: Align(
                 alignment: Alignment.topLeft,
                 child: IconButton(
-                  onPressed: () {},
+                  onPressed: () async => await showThemes(context),
                   icon: Icon(
                     Icons.settings,
                   ),

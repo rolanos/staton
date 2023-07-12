@@ -1,21 +1,29 @@
 import 'package:bloc/bloc.dart';
+import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:meta/meta.dart';
 import 'package:staton/models/answer_model.dart';
 import 'package:staton/models/db_model.dart';
+import 'package:staton/models/question_theme_model.dart';
 import '../../models/question_model.dart';
 import 'dart:math';
 import 'dart:convert';
 part 'question_event.dart';
 part 'question_state.dart';
 
-class QuestionBloc extends Bloc<QuestionEvent, QuestionInitial> {
+class QuestionBloc extends Bloc<QuestionEvent, QuestionState> {
   QuestionBloc() : super(QuestionInitial()) {
     //Получение следущего вопроса из Firebase
     on<NextQuestionEvent>((event, emit) async {
+      //Параметры запроса вопроса
+      final params = QuestionInitial.params;
+
+      if (event.params != null) {
+        QuestionInitial.params = event.params;
+      }
       //Номер получаемого вопроса определяется рандомно
-      int number;
+      int number = 1;
 
       //Firebase
       final ref = FirebaseDatabase.instance.ref();
@@ -32,33 +40,56 @@ class QuestionBloc extends Bloc<QuestionEvent, QuestionInitial> {
       //Количество вопросов
       final amount = await ref.child('data/number_of_questions').get();
 
-      //Подбираем рандомно вопрос, на который не было дано ответа.
-      do {
-        number = Random().nextInt((amount.value as int)) + 1;
-        if (check == number) {
-          history.add(number);
-          continue;
-        }
-        bool isIncluded = prefs.containsKey('$number');
-        if (!isIncluded) {
-          break;
-        } else {
-          history.add(number);
-        }
-        if ((history.length == (amount.value as int))) {
-          break;
-        }
-      } while (true);
+      if (params == null) {
+        //Подбираем рандомно вопрос, на который не было дано ответа.
+        do {
+          number = Random().nextInt((amount.value as int)) + 1;
+          if (check == number) {
+            history.add(number);
+            continue;
+          }
+          bool isIncluded = prefs.containsKey('$number');
+          if (!isIncluded) {
+            break;
+          } else {
+            history.add(number);
+          }
+          if ((history.length == (amount.value as int))) {
+            break;
+          }
+        } while (true);
+      } else {
+        try {
+          List<int> numbers = [];
+          for (var tag in params) {
+            final resp = await ref.child('data/tags/${tag.theme}').get();
+            final responseNumbers = (resp.value as List<Object?>);
 
-      //Получаем новый вопрос
-      final snapshot = await ref.child('question/$number').get();
-      await prefs.setInt('last', number);
+            for (var value in responseNumbers) {
+              numbers.add(value as int);
+            }
 
-      ///from 0 to amount-1
-      if (snapshot.exists) {
-        Map<String, dynamic> body = jsonDecode(jsonEncode(snapshot.value));
-        final newState = Question.fromMap(body);
-        emit(QuestionInitial(question: newState));
+            number = numbers[Random().nextInt(numbers.length)];
+          }
+        } catch (e) {
+          print(e);
+        }
+      }
+
+      try {
+        //Получаем новый вопрос
+        final snapshot = await ref.child('question/$number').get();
+        await prefs.setInt('last', number);
+
+        ///from 0 to amount-1
+        if (snapshot.exists) {
+          Map<String, dynamic> body = jsonDecode(jsonEncode(snapshot.value));
+          final newState = Question.fromMap(body);
+
+          emit(QuestionInitial(question: newState));
+        }
+      } catch (e) {
+        print(e);
       }
     });
 
@@ -163,20 +194,23 @@ class QuestionBloc extends Bloc<QuestionEvent, QuestionInitial> {
       }
     });
 
-    //-
-    on<GetQuestionInfoEvent>((event, emit) async {
+    on<GetThemes>((event, emit) async {
       final ref = FirebaseDatabase.instance.ref();
-
       try {
-        final snapshot = await ref.child('question/${event.number}').get();
+        final snapshot = await ref.child('data/tags').get();
         if (snapshot.exists) {
-          Map<String, dynamic> body = jsonDecode(jsonEncode(snapshot.value));
-          final newState = Question.fromMap(body);
-          emit(QuestionInitial(question: newState));
+          print(snapshot.value);
         }
+        List<ThemeQuestion> listThemes = [];
+        for (var key in (snapshot.value as Map<Object?, Object?>).keys) {
+          listThemes.add(ThemeQuestion(theme: key as String));
+        }
+        emit(ChooseThemes(themes: listThemes));
       } catch (e) {
         print(e);
       }
     });
+
+    on<SetThemes>((event, emit) => emit(ChooseThemes(themes: event.list)));
   }
 }

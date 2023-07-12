@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:staton/logic/history_bloc/history_bloc.dart';
 import 'package:staton/screens/main_screen.dart';
 import 'firebase_options.dart';
 import 'screens/home_screen/history_screen.dart';
@@ -23,8 +24,13 @@ class MyApp extends StatelessWidget {
   final List<Widget> screens = <Widget>[HomePage(), HistoryScreen()];
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => QuestionBloc(),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<QuestionBloc>(
+          create: (context) => QuestionBloc(),
+        ),
+        BlocProvider<HistoryBloc>(create: (context) => HistoryBloc())
+      ],
       child: MaterialApp(
         theme: ThemeData(
           appBarTheme: AppBarTheme(
@@ -35,7 +41,7 @@ class MyApp extends StatelessWidget {
             highlightColor: Color.fromARGB(200, 64, 38, 166),
           ),
           bottomNavigationBarTheme: BottomNavigationBarThemeData(
-            backgroundColor: Color.fromARGB(105, 35, 26, 92),
+            backgroundColor: Color.fromARGB(105, 31, 21, 93),
             selectedIconTheme: IconThemeData(color: Colors.white),
             unselectedIconTheme: IconThemeData(color: Colors.grey.shade600),
             selectedLabelStyle:
@@ -45,7 +51,7 @@ class MyApp extends StatelessWidget {
             selectedItemColor: Colors.white,
             unselectedItemColor: Colors.grey.shade600,
           ),
-          dialogBackgroundColor: Color.fromARGB(232, 32, 30, 73),
+          dialogBackgroundColor: Color.fromARGB(255, 56, 53, 114),
           dividerTheme: DividerThemeData(
               thickness: 0.5, color: const Color.fromARGB(255, 228, 255, 248)),
           snackBarTheme: SnackBarThemeData(

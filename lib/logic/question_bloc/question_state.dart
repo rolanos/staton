@@ -7,6 +7,8 @@ abstract class QuestionState {}
 class QuestionInitial extends QuestionState {
   final Question? question;
 
+  static List<ThemeQuestion>? params;
+
   QuestionInitial({this.question});
 
   QuestionInitial copyWith({
@@ -35,4 +37,10 @@ class QuestionInitial extends QuestionState {
 
   factory QuestionInitial.fromJson(String source) =>
       QuestionInitial.fromMap(json.decode(source) as Map<String, dynamic>);
+}
+
+class ChooseThemes extends QuestionState {
+  final List<ThemeQuestion> themes;
+
+  ChooseThemes({required this.themes});
 }

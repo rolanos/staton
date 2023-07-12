@@ -1,3 +1,4 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 part of 'question_bloc.dart';
 
 @immutable
@@ -12,13 +13,11 @@ class QuestionAnswerEvent extends QuestionEvent {
   QuestionAnswerEvent(this.question, this.answerNumber);
 }
 
-class NextQuestionEvent extends QuestionEvent {}
-
-class GetQuestionInfoEvent extends QuestionEvent {
-  //Номер вопроса
-  final int number;
-
-  GetQuestionInfoEvent(this.number);
+class NextQuestionEvent extends QuestionEvent {
+  final List<ThemeQuestion>? params;
+  NextQuestionEvent({
+    this.params = null,
+  });
 }
 
 class AddQuestionEvent extends QuestionEvent {
@@ -30,4 +29,12 @@ class AddQuestionEvent extends QuestionEvent {
   final List<String> tags;
 
   AddQuestionEvent(this.question, this.titels, this.tags);
+}
+
+class GetThemes extends QuestionEvent {}
+
+class SetThemes extends QuestionEvent {
+  final List<ThemeQuestion> list;
+
+  SetThemes(this.list);
 }
