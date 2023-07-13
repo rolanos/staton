@@ -50,7 +50,8 @@ class HistoryScreen extends StatelessWidget {
                       ),
                     ),
                     Padding(
-                      padding: EdgeInsets.all(12.0),
+                      padding: EdgeInsets.symmetric(
+                          vertical: 12.0, horizontal: 24.0),
                       child: TextFormField(
                         controller: controller,
                         decoration: InputDecoration(
@@ -96,89 +97,107 @@ class HistoryScreen extends StatelessWidget {
                         height: 1,
                       ),
                     ),
-                    Container(
-                      color: Color.fromARGB(255, 25, 26, 65),
-                      child: ListView.builder(
-                        controller: scrollController,
-                        physics: BouncingScrollPhysics(),
-                        scrollDirection: Axis.vertical,
-                        shrinkWrap: true,
-                        itemCount: data.length,
-                        itemBuilder: (context, index) {
-                          return Padding(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 20.0, vertical: 8.0),
-                            child: GestureDetector(
-                              onTap: () {
-                                showInfo[index] = !showInfo[index];
-                                if (lastTickedCard != index) {
-                                  if (lastTickedCard != -1)
-                                    showInfo[lastTickedCard] = false;
-                                  lastTickedCard = index;
-                                }
+                    ListView.builder(
+                      controller: scrollController,
+                      physics: BouncingScrollPhysics(
+                          decelerationRate: ScrollDecelerationRate.fast),
+                      scrollDirection: Axis.vertical,
+                      shrinkWrap: true,
+                      itemCount: data.length,
+                      itemBuilder: (context, index) {
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 20.0, vertical: 8.0),
+                          child: GestureDetector(
+                            onTap: () {
+                              showInfo[index] = !showInfo[index];
+                              if (lastTickedCard != index) {
+                                if (lastTickedCard != -1)
+                                  showInfo[lastTickedCard] = false;
+                                lastTickedCard = index;
+                              }
 
-                                context
-                                    .read<HistoryBloc>()
-                                    .add(GetQuestionInfoEvent(data[index].id));
-                              },
-                              child: Container(
-                                decoration: BoxDecoration(
-                                    color: Color.fromARGB(255, 104, 43, 201),
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(8))),
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    const SizedBox(
-                                      height: 12,
+                              context
+                                  .read<HistoryBloc>()
+                                  .add(GetQuestionInfoEvent(data[index].id));
+                            },
+                            child: Container(
+                              padding: EdgeInsets.symmetric(vertical: 8.0),
+                              decoration: BoxDecoration(
+                                  color: Color.fromARGB(255, 104, 43, 201),
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(8))),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.all(10.0),
+                                    child: Row(
+                                      children: [
+                                        Text(data[index].id.toString() + '.'),
+                                        SizedBox(
+                                          width: 10,
+                                        ),
+                                        Flexible(
+                                          child: Text(data[index].question,
+                                              maxLines: null),
+                                        ),
+                                      ],
                                     ),
-                                    Padding(
-                                      padding: const EdgeInsets.all(10.0),
-                                      child: Row(
-                                        children: [
-                                          Text(data[index].id.toString() + '.'),
-                                          SizedBox(
-                                            width: 10,
+                                  ),
+                                  (showInfo[index])
+                                      ? Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 12.0),
+                                          child: Divider(
+                                            thickness: 2,
                                           ),
-                                          Flexible(
-                                            child: Text(data[index].question,
-                                                maxLines: null),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    const SizedBox(
-                                      height: 12,
-                                    ),
-                                    (showInfo[index])
-                                        ? SizedBox(
-                                            child: ListView.builder(
-                                                shrinkWrap: true,
-                                                itemCount: state.shownQuestion!
-                                                    .titels!.length,
-                                                itemBuilder: (_, i) {
-                                                  return Container(
-                                                    padding: EdgeInsets.all(8),
-                                                    child: Column(
-                                                      children: [
-                                                        Text(state
-                                                            .shownQuestion!
-                                                            .titels![i]),
-                                                        Text(
-                                                            "${(100 * state.shownQuestion!.answersAmount![i] / state.shownQuestion!.totalResponses!).toStringAsFixed(1)}%")
-                                                      ],
-                                                    ),
-                                                  );
-                                                }),
-                                          )
-                                        : SizedBox(),
-                                  ],
-                                ),
+                                        )
+                                      : SizedBox(),
+                                  (showInfo[index])
+                                      ? SizedBox(
+                                          child: ListView.builder(
+                                              shrinkWrap: true,
+                                              itemCount: state.shownQuestion!
+                                                  .titels!.length,
+                                              itemBuilder: (_, i) {
+                                                return Container(
+                                                  padding: EdgeInsets.all(8.0),
+                                                  child: Column(
+                                                    children: [
+                                                      Text(
+                                                        state.shownQuestion!
+                                                            .titels![i],
+                                                        style: Theme.of(context)
+                                                            .textTheme
+                                                            .bodyMedium!
+                                                            .copyWith(
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w400),
+                                                      ),
+                                                      Text(
+                                                        "${(100 * state.shownQuestion!.answersAmount![i] / state.shownQuestion!.totalResponses!).toStringAsFixed(1)}%",
+                                                        style: Theme.of(context)
+                                                            .textTheme
+                                                            .bodyMedium!
+                                                            .copyWith(
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w600),
+                                                      )
+                                                    ],
+                                                  ),
+                                                );
+                                              }),
+                                        )
+                                      : SizedBox(),
+                                ],
                               ),
                             ),
-                          );
-                        },
-                      ),
+                          ),
+                        );
+                      },
                     ),
                   ],
                 ),

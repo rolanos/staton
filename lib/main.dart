@@ -41,7 +41,7 @@ class MyApp extends StatelessWidget {
             highlightColor: Color.fromARGB(200, 64, 38, 166),
           ),
           bottomNavigationBarTheme: BottomNavigationBarThemeData(
-            backgroundColor: Color.fromARGB(105, 31, 21, 93),
+            backgroundColor: Color.fromARGB(213, 21, 16, 64),
             selectedIconTheme: IconThemeData(color: Colors.white),
             unselectedIconTheme: IconThemeData(color: Colors.grey.shade600),
             selectedLabelStyle:

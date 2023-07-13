@@ -16,12 +16,17 @@ class QuestionBloc extends Bloc<QuestionEvent, QuestionState> {
   QuestionBloc() : super(QuestionInitial()) {
     //Получение следущего вопроса из Firebase
     on<NextQuestionEvent>((event, emit) async {
+      if (event.params != null) {
+        if (event.params!.isNotEmpty) {
+          QuestionInitial.params = event.params;
+        }
+      } else {
+        QuestionInitial.params = null;
+      }
+
       //Параметры запроса вопроса
       final params = QuestionInitial.params;
 
-      if (event.params != null) {
-        QuestionInitial.params = event.params;
-      }
       //Номер получаемого вопроса определяется рандомно
       int number = 1;
 
@@ -68,8 +73,9 @@ class QuestionBloc extends Bloc<QuestionEvent, QuestionState> {
             for (var value in responseNumbers) {
               numbers.add(value as int);
             }
-
-            number = numbers[Random().nextInt(numbers.length)];
+            do {
+              number = numbers[Random().nextInt(numbers.length)];
+            } while (number == check);
           }
         } catch (e) {
           print(e);

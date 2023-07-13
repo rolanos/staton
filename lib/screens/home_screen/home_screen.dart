@@ -76,7 +76,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                 iconOnRightSwipe: Icons.refresh,
                 iconColor: Color.fromARGB(255, 152, 145, 215),
                 onRightSwipe: () {
-                  context.read<QuestionBloc>().add(NextQuestionEvent());
+                  context
+                      .read<QuestionBloc>()
+                      .add(NextQuestionEvent(params: QuestionInitial.params));
                   showStat = false;
                   currentTickedIndex = -1;
                   // ignore: unused_local_variable
@@ -221,9 +223,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                 onPressed: () async {
                                   if (showStat) {
                                     setState(() {
-                                      context
-                                          .read<QuestionBloc>()
-                                          .add(NextQuestionEvent());
+                                      context.read<QuestionBloc>().add(
+                                          NextQuestionEvent(
+                                              params: QuestionInitial.params));
                                       isTicked[currentTickedIndex] = false;
                                     });
                                     showStat = false;

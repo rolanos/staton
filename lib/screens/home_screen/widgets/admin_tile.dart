@@ -88,6 +88,14 @@ class AdminUI {
                       ),
                       TextButton(
                           onPressed: () {
+                            questionController.text.trim();
+                            for (var i = 0; i < answerAddList.length; i++) {
+                              answerAddList[i].text.trim();
+                            }
+                            for (var i = 0; i < tagsList.length; i++) {
+                              tagsList[i].text.trim();
+                            }
+
                             context.read<QuestionBloc>().add(AddQuestionEvent(
                                 questionController.text,
                                 List.generate(answerAddList.length,
@@ -96,6 +104,7 @@ class AdminUI {
                                     (index) => tagsList[index].text)));
                             //Очистка полей ввода
                             setState(() {
+                              questionController.clear();
                               answerAddList = [];
                               tagsList = [];
                               answerAddList = [];

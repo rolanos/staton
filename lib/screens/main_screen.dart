@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:staton/logic/question_bloc/question_bloc.dart';
 import 'home_screen/history_screen.dart';
 import 'home_screen/home_screen.dart';
@@ -20,6 +21,7 @@ class _MainScreenState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: (pageIndex == 0)
           ? AppBar(
               leading: Align(
@@ -54,32 +56,52 @@ class _MainScreenState extends State<MainScreen> {
                 height: 64,
                 width: 64,
                 child: FloatingActionButton(
-                  onPressed: () =>
-                      context.read<QuestionBloc>().add(NextQuestionEvent()),
+                  onPressed: () => context
+                      .read<QuestionBloc>()
+                      .add(NextQuestionEvent(params: QuestionInitial.params)),
                   splashColor: Color.fromARGB(255, 139, 81, 255),
                   hoverColor: Color.fromARGB(255, 63, 37, 114),
                   backgroundColor: Color.fromARGB(255, 139, 81, 255),
                   child: Container(
-                      height: 64,
-                      width: 64,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        border: Border.all(
-                            color: Color.fromARGB(199, 41, 30, 83), width: 8),
+                    height: 64,
+                    width: 64,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                          color: Color.fromARGB(199, 41, 30, 83), width: 8),
+                    ),
+                    child: Shimmer.fromColors(
+                      baseColor: Colors.white,
+                      highlightColor: Color.fromARGB(55, 108, 61, 155),
+                      child: Icon(
+                        Icons.refresh,
+                        color: Colors.white,
                       ),
-                      child: Icon(Icons.refresh)),
+                    ),
+                  ),
                 ),
               ),
             )
           : null,
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: pageIndex,
-        onTap: (value) => setState(() => pageIndex = value),
-        items: [
-          BottomNavigationBarItem(
-              icon: Icon(Icons.question_mark), label: 'Вопрос'),
-          BottomNavigationBarItem(icon: Icon(Icons.history), label: 'История'),
-        ],
+      bottomNavigationBar: Container(
+        decoration: BoxDecoration(
+          border: Border(
+            top: BorderSide(
+              width: 2,
+              color: Color.fromARGB(255, 103, 99, 148),
+            ),
+          ),
+        ),
+        child: BottomNavigationBar(
+          currentIndex: pageIndex,
+          onTap: (value) => setState(() => pageIndex = value),
+          items: [
+            BottomNavigationBarItem(
+                icon: Icon(Icons.question_mark), label: 'Вопрос'),
+            BottomNavigationBarItem(
+                icon: Icon(Icons.history), label: 'История'),
+          ],
+        ),
       ),
       body: screens[pageIndex],
     );
