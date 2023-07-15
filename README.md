@@ -1,16 +1,13 @@
-# staton
+# Хороший вопрос (Staton)
 
-A new Flutter project.
+"_Хороший вопрос_" - это увлекательный проект, созданный для сбора мнений и предпочтений пользователей на разнообразные социальные вопросы. Наша цель - создать платформу, где каждый человек может выразить свое мнение и увидеть предпочтения окружающих.
 
-## Getting Started
+Через систему вопросов "_Хороший вопрос_" позволяет собирать достоверную информацию о различных аспектах общества, таких как мнения о образе жизни, культуре, образовании, здравоохранении, технологиях и многом другом.
 
-This project is a starting point for a Flutter application.
+Мы предлагаем удобный и простой интерфейс, который позволяет участникам проекта пройтиходить опрос и видеть результаты других людей всего в несколько кликов. Результаты овпросо анализировуются и используются для создания точной статистической модели по конкретному вопросу, которые помогут понять настроения и потребности населения.
 
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Стек технологий
+- Base: Dart/Flutter
+- State Management: BloC
+- Backend: Google Firebase Realtime Database
+- Storage: sqflite, SharedPreferences Shared preferences
