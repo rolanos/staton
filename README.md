@@ -10,4 +10,6 @@
 - Base: Dart/Flutter
 - State Management: BloC
 - Backend: Google Firebase Realtime Database
-- Storage: sqflite, SharedPreferences Shared preferences
+- Storage: SQLite(sqflite), Shared preferences
+
+## Скриншоты
